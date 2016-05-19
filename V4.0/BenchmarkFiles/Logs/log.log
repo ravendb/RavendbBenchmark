@@ -1,0 +1,120 @@
+19-05-16,14:53
+-----------------------------------------------------------------
+Running 10s test @ http://10.0.0.59:8080/build/version
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     3.06ms    8.42ms  69.34ms   91.44%
+    Req/Sec     1.72k   527.81     2.47k    75.52%
+  171245 requests in 10.10s, 30.21MB read
+Requests/sec:  16955.67
+Transfer/sec:      2.99MB
+Running 10s test @ http://10.0.0.59:8080/admin/emptymessage
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     4.33ms   15.70ms 173.74ms   94.03%
+    Req/Sec     1.78k   561.64     2.70k    76.51%
+  176425 requests in 10.10s, 15.48MB read
+Requests/sec:  17469.58
+Transfer/sec:      1.53MB
+Running 1m test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     7.42ms   21.78ms 461.67ms   96.92%
+    Req/Sec   238.55     82.78   590.00     68.62%
+  141614 requests in 1.00m, 34.74MB read
+Requests/sec:   2358.45
+Transfer/sec:    592.41KB
+queryWithDynamicIndex
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    32.28ms   33.60ms 342.06ms   95.34%
+    Req/Sec    36.77     10.70    70.00     67.43%
+  3586 requests in 10.01s, 404.04MB read
+Requests/sec:    358.28
+Transfer/sec:     40.37MB
+queryWithIndex
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.19ms    4.62ms  79.78ms   97.05%
+    Req/Sec     1.89k   329.23     2.48k    77.78%
+  189186 requests in 10.10s, 41.14MB read
+  Non-2xx or 3xx responses: 189186
+Requests/sec:  18732.37
+Transfer/sec:      4.07MB
+deleteDocument
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     2.13ms    5.47ms  91.29ms   97.59%
+    Req/Sec   712.63    131.12     1.00k    75.30%
+  70995 requests in 10.01s, 13.18MB read
+Requests/sec:   7089.81
+Transfer/sec:      1.32MB
+loadWithTransformer
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     0.95ms    3.22ms  55.02ms   97.41%
+    Req/Sec     1.89k   294.25     2.53k    80.86%
+  189161 requests in 10.10s, 42.55MB read
+  Non-2xx or 3xx responses: 189161
+Requests/sec:  18730.54
+Transfer/sec:      4.21MB
+queryWithInclude
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.05ms    3.58ms  52.81ms   96.92%
+    Req/Sec     1.89k   325.03     2.47k    81.53%
+  189370 requests in 10.10s, 46.93MB read
+  Non-2xx or 3xx responses: 189370
+Requests/sec:  18749.15
+Transfer/sec:      4.65MB
+loadById
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.19ms    2.12ms  48.85ms   97.61%
+    Req/Sec     1.04k   117.90     1.37k    80.22%
+  104026 requests in 10.10s, 122.03MB read
+Requests/sec:  10301.62
+Transfer/sec:     12.08MB
+loadWithInclude
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.45ms    3.30ms  54.75ms   97.09%
+    Req/Sec     0.99k   205.05     1.49k    71.88%
+  98728 requests in 10.10s, 151.79MB read
+Requests/sec:   9775.75
+Transfer/sec:     15.03MB
+lazyQueryWithInclude
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.09ms    4.85ms  87.39ms   97.91%
+    Req/Sec     1.87k   283.08     2.33k    76.76%
+  187749 requests in 10.10s, 47.61MB read
+Requests/sec:  18591.06
+Transfer/sec:      4.71MB
+loadWithMultiIncludes
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     5.16ms   18.93ms 251.76ms   95.85%
+    Req/Sec   821.93    245.83     1.36k    74.14%
+  81193 requests in 10.10s, 316.61MB read
+Requests/sec:   8039.07
+Transfer/sec:     31.35MB
+queryWithMultiIncludes
+Running 10s test @ http://10.0.0.59:8080/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   725.88us    1.99ms  34.41ms   97.97%
+    Req/Sec     1.98k   287.43     2.48k    76.02%
+  198719 requests in 10.10s, 47.57MB read
+  Non-2xx or 3xx responses: 198719
+Requests/sec:  19675.39
+Transfer/sec:      4.71MB

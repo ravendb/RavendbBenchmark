@@ -1,0 +1,4 @@
+errorList.push("queryWithIndex");
+errorList.push("loadWithTransformer");
+errorList.push("queryWithInclude");
+errorList.push("queryWithMultiIncludes");

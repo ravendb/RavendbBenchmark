@@ -1,0 +1,164 @@
+#!/bin/bash
+source ~/Efrat/Benchmark/V3.5/BenchmarkFiles/benchmark.config
+
+echo Working....
+
+#Backup the result file
+cp $BENCHMARKDIR/benchmark.results $BENCHMARKDIR/benchmark.results.backup
+
+echo -n "" > $BENCHMARKDIR/Logs/error.log
+echo -n "" > $BENCHMARKDIR/Logs/log.log
+
+#Check if the server online 
+SERVERALIVE=`curl -i -s -X GET http://$SERVERIP/docs?id=Raven%2FDatabases%2FBenchmarkDB |grep -o 'HTTP/1.1 200 OK'`
+if [ "$SERVERALIVE" != "HTTP/1.1 200 OK" ]
+then
+	echo "The server is not working"
+	echo -n "errorList.push(\"" >> $BENCHMARKDIR/Logs/error.log
+	echo -n "$(date +"%d-%m-%y") The server is not working\");" >> $BENCHMARKDIR/Logs/error.log
+	exit
+fi
+
+echo $(date +"%d-%m-%y,%H:%M") >> $BENCHMARKDIR/Logs/log.log
+echo "-----------------------------------------------------------------" >> $BENCHMARKDIR/Logs/log.log
+
+KEY=(${!TESTS[*]})
+#Get build version
+RES=$(curl -s -X GET http://$SERVERIP/build/version)
+RES=`echo $RES |grep -o '"BuildVersion":[0-9]*' | grep -o '[0-9]*'`
+
+sed -i '/date/s/.$//' $BENCHMARKDIR/benchmark.results
+sed -i '/date/s/$/,"'$(date +"%d-%m-%y")' Build:'$RES'" ]/' $BENCHMARKDIR/benchmark.results
+echo -n $(date +"%d-%m-%y"), >> $BENCHMARKDIR/benchmarkResults.csv
+echo -n $RES, >> $BENCHMARKDIR/benchmarkResults.csv
+
+#Build version test
+echo -n start build version test....	
+RES=`$WRKDIR -t10 -c10 http://$SERVERIP/build/version`
+echo "$RES" >> $BENCHMARKDIR/Logs/log.log
+if [ `echo "$RES" |grep -c "Non-2xx or 3xx responses"` != "0" ]
+then
+	echo -n "errorList.push(\"" >> $BENCHMARKDIR/Logs/error.log
+	echo -n "build version test" >> $BENCHMARKDIR/Logs/error.log
+	echo  "\");" >> $BENCHMARKDIR/Logs/erros.log
+	sed -i '/build/s/.$//' $BENCHMARKDIR/benchmark.results
+	sed -i '/build/s/$/,""]/' $BENCHMARKDIR/benchmark.results
+	echo -n "", >> $BENCHMARKDIR/benchmarkResults.csv
+	echo -e "\e[31mError"
+	echo -e -n "\e[39m"
+else
+	RES=`echo -n $RES | grep -o "Requests/sec".* | awk '{print $2}'`
+	sed -i '/build/s/.$//' $BENCHMARKDIR/benchmark.results
+	sed -i '/build/s/$/,"'$RES'"]/' $BENCHMARKDIR/benchmark.results
+	echo -n $RES, >> $BENCHMARKDIR/benchmarkResults.csv
+	echo -e "\e[32mDone"
+	echo -e -n "\e[39m"
+fi
+
+#Empty test
+echo -n start empty message test....
+RES=`$WRKDIR -t10 -c10 http://$SERVERIP/Benchmark/EmptyMessage`
+echo "$RES" >> $BENCHMARKDIR/Logs/log.log
+if [ `echo "$RES" |grep -c "Non-2xx or 3xx responses"` != "0" ]
+then
+	echo -n "errorList.push(\"" >> $BENCHMARKDIR/Logs/error.log
+	echo -n "Empty test" >> $BENCHMARKDIR/Logs/error.log
+	echo  "\");" >> $BENCHMARKDIR/Logs/error.log
+	sed -i '/empty/s/.$//' $BENCHMARKDIR/benchmark.results
+	sed -i '/empty/s/$/,""]/' $BENCHMARKDIR/benchmark.results
+	echo -n "", >> $BENCHMARKDIR/benchmarkResults.csv
+	echo -e "\e[31mError"
+	echo -e -n "\e[39m"
+else
+	RES=`echo -n $RES | grep -o "Requests/sec".* | awk '{print $2}'`
+	sed -i '/empty/s/.$//' $BENCHMARKDIR/benchmark.results
+	sed -i '/empty/s/$/,"'$RES'"]/' $BENCHMARKDIR/benchmark.results
+	echo -n $RES, >> $BENCHMARKDIR/benchmarkResults.csv
+	echo -e "\e[32mDone"
+	echo -e -n "\e[39m"
+fi
+
+# Create new index 
+
+echo -n start create new index test....
+$SCRIPTSDIR/NewIndex
+echo -e "\e[32mDone"
+echo -e -n "\e[39m"
+
+
+
+echo -n start new documents test....
+RES=`$WRKDIR -t10 -c10 -d1m -s $LUADIR/NewDocuments.lua  http://$SERVERIP/`
+echo "$RES" >> $BENCHMARKDIR/Logs/log.log
+if [ `echo "$RES" |grep -c "Non-2xx or 3xx responses"` != "0" ]
+then
+	echo -n "errorList.push(\"" >> $BENCHMARKDIR/Logs/error.log
+	echo -n "New documents test" >> $BENCHMARKDIR/Logs/error.log
+	echo  "\");" >> $BENCHMARKDIR/Logs/erros.log
+	sed -i '/newDocuments/s/.$//' $BENCHMARKDIR/benchmark.results
+	sed -i '/newDocuments/s/$/,""]/' $BENCHMARKDIR/benchmark.results
+	echo -n "", >> $BENCHMARKDIR/benchmarkResults.csv
+	echo -e "\e[31mError"
+	echo -e -n "\e[39m"
+else
+	RES=`echo -n $RES | grep -o "Requests/sec".* | awk '{print $2}'`
+	sed -i '/newDocuments/s/.$//' $BENCHMARKDIR/benchmark.results
+	sed -i '/newDocuments/s/$/,"'$RES'"]/' $BENCHMARKDIR/benchmark.results
+	echo -n $RES, >> $BENCHMARKDIR/benchmarkResults.csv
+	echo -e "\e[32mDone"
+	echo -e -n "\e[39m"
+fi
+
+sleep 20
+
+for index in ${!TESTS[*]}
+do
+
+	echo -n start $index test....
+	RES=`$WRKDIR -t10 -c10 -s ${TESTS[$index]} http://$SERVERIP/`
+	echo "$index" >> $BENCHMARKDIR/Logs/log.log	
+	echo "$RES" >> $BENCHMARKDIR/Logs/log.log
+	if [ `echo "$RES" |grep -c "Non-2xx or 3xx responses"` != "0" ]
+	then
+		echo -n "errorList.push(\"" >> $BENCHMARKDIR/Logs/error.log
+		echo -n "$index" >> $BENCHMARKDIR/Logs/error.log
+		echo  "\");" >> $BENCHMARKDIR/Logs/error.log
+		sed -i '/'$index'/s/.$//' $BENCHMARKDIR/benchmark.results
+		sed -i '/'$index'/s/$/,""]/' $BENCHMARKDIR/benchmark.results
+		echo -n "", >> $BENCHMARKDIR/benchmarkResults.csv
+		echo -e "\e[31mError"
+		echo -e -n "\e[39m"
+	else
+		RES=`echo -n $RES | grep -o "Requests/sec".* | awk '{print $2}'`
+		sed -i '/'$index'/s/.$//' $BENCHMARKDIR/benchmark.results
+		sed -i '/'$index'/s/$/,"'$RES'"]/' $BENCHMARKDIR/benchmark.results
+		echo -n $RES, >> $BENCHMARKDIR/benchmarkResults.csv
+		echo -e "\e[32mDone"
+		echo -e -n "\e[39m"
+	fi
+	if [ $index == "queryWithDynamicIndex" ]
+	then
+		curl -s -X DELETE http://$SERVERIP/databases/BenchmarkDB/indexes/Auto/Disks/ByGenre
+	fi
+	
+done 
+sleep 20
+echo -n start indexing new documents test....
+$SCRIPTSDIR/indexingNewDocuments
+echo -e "\e[32mDone"
+echo -e -n "\e[39m"
+
+sleep 5
+echo -n start create 10 new indexex test.... 
+$SCRIPTSDIR/tennewindexes
+echo -e "\e[32mDone"
+echo -e -n "\e[39m"
+
+
+curl -s -X DELETE http://$SERVERIP/databases/BenchmarkDB/bulk_docs/Raven/DocumentsByEntityName?\&query=Tag:Temp&allowStale=False\&details=False 
+curl -s -X DELETE http://$SERVERIP/databases/BenchmarkDB/bulk_docs/Raven/DocumentsByEntityName?\&query=Tag:PatchResult\&allowStale=False\&details=False
+
+#cp $BENCHMARKDIR/benchmark.results /media/windows-share/Benchmark/V3/V3.5/benchmark.results
+echo Done
+
+

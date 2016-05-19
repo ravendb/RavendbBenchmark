@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+
+	<head>
+		<title>Benchmark results</title>
+		<script src="bower_components/Chart.js/Chart.js"></script>
+		
+		<meta charset="UTF-8">	
+
+</style>
+
+	</head>
+	<body>
+		
+		<div style="width:90%">
+			<div style="background-color:rgb(255, 230, 204);">
+			<h1> RavenDB V3.5 </h1>
+			<hr>
+			</div>
+			<h3> - Database contain : 4,567,934 documents ( 3,594,302 Disks documents, 973,632 Artists documents )</h3>	
+			<h3 id=error >- Errors in tests:</h2>
+			<h4 id=errors></h3>
+			<hr >
+			<div style="background-color:rgb(255, 255, 230);">
+			<h2 >Empty and Build version tests - Requests/sec</h2>
+				<hr></div>
+				
+				<h5 id="build" >- Build version test: http://{serverip:port}/build/version</h5>
+				<h5 id="empty" >- Empty test: http://{serverip:port}/Benchmark/EmptyMessage</h5>
+				<canvas id="basicChartData" height="150" width="1000" ></canvas>
+			<hr >
+			<div style="background-color:rgb(255, 255, 230);">
+			<h2 >Load tests - Requests/sec</h2>
+			<hr ></div>
+				<h5 id="loadById">- Load by id test: http://{serverip:port}/databases/BenchmarkDB/docs?id=disks%2F{random}</h5>
+				<h5 id="loadWithInclude">- Load with include test: http://{serverip:port}/databases/BenchmarkDB/queries/?include=OneDisk&id=artist%2F{random}</h5>
+				<h5 id="loadWithMultiIncludes">- Load with multi includes test: http://{serverip:port}/databases/BenchmarkDB/queries/?include=Disks&id=artist%2F{random} <br>
+								 * include can be between 1 document to 400,000 documents</h5>
+				<h5 id="loadWithTransformer">- Load with transformer test: 
+					http://{serverip:port}/databases/BenchmarkDB/queries/?&transformer=JustTitleAndArtist&id=disks%2F{random}</h5>
+				<canvas id="loadChartData" height="250" width="1000" ></canvas>
+			<hr>
+			<div style="background-color:rgb(255, 255, 230);">
+			<h2 >Query tests - Requests/sec</h2>
+			<hr ></div>
+				<h5 id="queryWithIndex">- Query with index test : 
+					http://{serverip:port}/databases/BenchmarkDB/indexes/disks/ByYear?&query=Year:{random}&pageSize=128 (~3,500,000 documents )</h5>
+				<h5 id="queryWithDynamicIndex">- Query with dynamic index:
+					http://{serverip:port}/databases/BenchmarkDB/indexes/dynamic/Disks?&query=Genre:Dance&pageSize=128</h5>
+				<h5 id="queryWithInclude">-Query with include test: 
+					http://{serverip:port}/databases/BenchmarkDB/indexes/Disks/ByArtists?&query=OneDisk:disks%2F{random}&pageSize=128&include=OneDisk (~1,000,000 documents )</h5>
+				<h5 id="queryWithMultiIncludes">-Query with multi includes test: 
+					http://{serverip:port}/databases/BenchmarkDB/indexes/Disks/ByArtists?&query=Disks:disks%2F{random}&pageSize=128&include=Disks</h5>
+				<h5 id="lazyQueryWithInclude">- Lazy query with include test: 
+					</br>http://{serverip:port}/databases/BenchmarkDB/multi_get?parallel=yes
+					</br>In body : POST , [{"Url":"/indexes/Disks/ByArtists","Headers":{},"Query":"?&query=OneDisk:disks%2F{random}
+						&pageSize=128&include=OneDisk","Method":null,"Content":null}]</h5>
+				<canvas id="queryChartData" height="150" width="1000" ></canvas>
+			<hr>
+			<div style="background-color:rgb(255, 255, 230);">
+			<h2 >Store and delete tests - Requests/sec</h2>
+			<hr ></div>
+				<h5 id="newDocuments">- New documents test: 
+					</br>http://{serverip:port}/databases/BenchmarkDB/bulk_docs
+					</br>In body : POST , [{"Key":"temp/{counter}","Method":"PUT","Document":{"Name":"test{random}","Supplier":{random},"Category":{random},"QuantityPerUnit":{random},"PricePerUnit":{random},"UnitsInStock":{random},"UnitsOnOrder":{random},"Discontinued":false,"ReorderLevel":{random}},"Metadata":{"Raven-Entity-Name":"Temp"},"AdditionalData":null,"Etag":null}]</h5>
+				<h5 id="deleteDocument">-Delete test: 
+					</br>http://{serverip:port}/databases/BenchmarkDB/bulk_docs
+					</br>In body : POST , [{"Key":"temp{counter}","Etag":null,"Method":"DELETE","AdditionalData":null}]</h5>
+				<canvas id="storeDeleteChartData" height="150" width="1000" ></canvas>
+			<hr>
+			<div style="background-color:rgb(255, 255, 230);">
+			<h2 >Indexes tests</h2>
+			<hr ></div>
+				<h3>Create new index - min.sec
+				<h5 id="indexTime">- Create new Index test: Simple index on the last 973,632 documents , (~5,000,000 documents in DB) </h5>
+				<canvas id="indexChartData" height="150" width="1000" ></canvas>
+				
+				<h3>Create 10 new indexs - min.sec
+				<h5 id="tennewindexes">- Create 10 new Indexes test: Simple index on the last 973,632 documents , (~5,000,000 documents in DB) </h5>
+				<canvas id="indexChartData1" height="150" width="1000" ></canvas>
+
+				<h3>Indexing new documents - sec.ms
+				<h5 id="indexingNewDocuments">- Indexing new documents test: Inserting new 973,632 documents ( with patch ). 
+								Map/Reduce index already exist.  </h5>
+				<canvas id="indexChartData2" height="150" width="1000" ></canvas>
+
+			
+		</div>
+		<script src="../BenchmarkFiles/benchmark.results"></script>
+		<script src="benchmark.config.js"></script>
+		<script src="../BenchmarkFiles/Logs/error.log"></script>
+ 
+	<script>
+
+
+	window.onload = function(){
+	
+		if ( errorList.length > 0 )
+		{
+			var errorString = "";
+			document.getElementById("error").style.visibility = "visible";
+			document.getElementById("error").style.color = "red"
+			for ( i = 0 ; i < errorList.length ; i++)
+			{
+				errorString = errorString + errorList[i] + ", ";
+			}
+			document.getElementById("errors").innerHTML=errorString;
+			document.getElementById("errors").style.color = "red"	
+		}
+		else
+		{
+			document.getElementById("error").innerHTML = "- No errors in tests "
+			document.getElementById("error").style.visibility = "visible";
+			
+		}
+		
+		for ( i = 0 ; i < varArray.length ; i++)
+		{
+			document.getElementById(varArray[i].Name).style.color = colors[i];		
+		}
+		
+
+		var ctx = document.getElementById("basicChartData").getContext("2d");
+		window.myLine = new Chart(ctx).Line(basicChartData, {
+			responsive: true
+		});
+		
+	
+		var ctx = document.getElementById("loadChartData").getContext("2d");
+		window.myLine = new Chart(ctx).Line(loadChartData, {
+			responsive: true
+			
+		});
+
+		var ctx = document.getElementById("queryChartData").getContext("2d");
+		window.myLine = new Chart(ctx).Line(queryChartData, {
+			responsive: true 
+		});
+
+		var ctx = document.getElementById("storeDeleteChartData").getContext("2d");
+		window.myLine = new Chart(ctx).Line(storeDeleteChartData, {
+			responsive: true 
+		});
+
+		var ctx = document.getElementById("indexChartData").getContext("2d");
+		window.myLine = new Chart(ctx).Line(indexChartData, {
+			responsive: true 
+		});
+
+		var ctx = document.getElementById("indexChartData1").getContext("2d");
+		window.myLine = new Chart(ctx).Line(indexChartData1, {
+			responsive: true 
+		});
+
+
+		var ctx = document.getElementById("indexChartData2").getContext("2d");
+		window.myLine = new Chart(ctx).Line(indexChartData2, {
+			responsive: true 
+		});
+			
+
+		}
+	
+	</script>
+	
+	</body>
+</html>

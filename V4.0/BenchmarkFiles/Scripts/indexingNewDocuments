@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#RESPONSE=$(curl -s -X EVAL -d "{\"Script\":\"for ( var i = 0; i < 1 ; i++ )\\r\\n{\\r\\n    PutDocument('patchresult/', this,{'Raven-Entity-Name': 'PatchResult'})\\r\\n}\",\"Values\":{}}" http://$SERVERIP/databases/BenchmarkDB/bulk_docs/Raven%2FDocumentsByEntityName?query=Tag:Artists\&allowStale=true)
+#OPID=$(echo $RESPONSE | grep -o '[0-9]*')
+#RESPONSE=$(curl -s -X GET http://$SERVERIP/databases/BenchmarkDB/operation/status?id=$OPID) 
+#OP1=`echo $RESPONSE |grep -o '"Completed":true'`
+#OP2=''
+#while [ "$OP1" == "$OP2" ]
+#do
+#	RESPONSE=$(curl -s -X GET http://$SERVERIP/databases/BenchmarkDB/operation/status?id=$OPID) 
+#	OP1=`echo $RESPONSE |grep -o '"Completed":true'`
+#done
+#START=$(date +%s%3N)
+#RESPONSE=$(curl -s http://$SERVERIP/databases/BenchmarkDB/indexes/PatchResult/ByNumberOfDisks?&pageSize=1)
+#OP1=`echo $RESPONSE  | grep -o '"IsStale":false'`
+#OP2=''
+#while [ "$OP1" == "$OP2" ]
+#do
+#	RESPONSE=$(curl -s http://$SERVERIP/databases/BenchmarkDB/indexes/PatchResult/ByNumberOfDisks?&pageSize=1)
+#	OP1=`echo $RESPONSE  | grep -o '"IsStale":false'`
+#done
+#END=$(date +%s%3N)
+#RES=`echo $((END-START)) |awk '{print int($1/1000)"."int($1%1000)}'`
+#sed -i '/indexingNewDocuments/s/.$//' $BENCHMARKDIR/benchmark.results
+#sed -i '/indexingNewDocuments/s/$/,"'$RES'"]/' $BENCHMARKDIR/benchmark.results
+#echo $RES >> $BENCHMARKDIR/benchmarkResults.csv
+
+sed -i '/indexingNewDocuments/s/.$//' $BENCHMARKDIR/benchmark.results
+sed -i '/indexingNewDocuments/s/$/,""]/' $BENCHMARKDIR/benchmark.results
+echo "" >> $BENCHMARKDIR/benchmarkResults.csv

@@ -1,0 +1,7 @@
+Date,Build verion,Build version test - Requests/sec,Empty test - Requests/sec,New index test - min.sec,New documents test - Requests/sec,Query with dynamic index test - Requests/sec,Query with static index test - Requests/sec,Delete documents test - Requests/sec,Load with transformer test - Requests/sec,Query with include test - Requests/sec,Load by id test - Requests/sec,Load with include test - Requests/sec,Lazy query with include test - Requests/sec,Load with multi includes test - Requests/sec,Query with multi includes test - Requests/sec,indexing new documents - sec.ms,10 new indexes
+
+19-05-16,13,19-05-16,13,12435.03,17586.61,4.0,2089.18,384.42,2112.38,4617.22,7391.77,4831.40,7088.86,6529.86,1951.67,3860.18,37.57,
+13.891
+19-05-16,13,8895.30,14511.52,7.19,2080.47,652.77,2545.83,4198.16,6976.79,3454.15,7643.74,7325.81,1194.14,3287.88,29.97,7.913
+19-05-16,13,12285.12,17551.58,4.58,2081.66,777.31,2349.08,4646.61,7551.54,4923.72,7004.77,6233.12,1811.80,3617.59,37.67,12.531
+8.52,19-05-16,13,11777.28,17183.99,5.51,2075.67,723.07,2023.45,4816.68,7568.83,
